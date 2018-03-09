@@ -1,0 +1,128 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import random as random
+from random import randint
+import math as math
+import self as self
+
+from matplotlib.patches import Circle
+
+class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+
+class Main:
+    def __init__(self):
+        self.__redPoints = []
+        self.__bluePoints = []
+        self.__plusPoints = 0
+        self.__minusPoints = 0
+        self.__population = []
+        self.__coefficients = []
+        self.__plusError = 0
+        self.__minusError = 0
+
+
+    def func(self, coefficients, x):
+        power = coefficients[0]
+        for i in range (1, coefficients.__len__()):
+            power += pow(x, i) * coefficients[i]
+        self.__population.append(power)
+        return power
+
+
+    def print_func(self, func, coefficients):
+        x = np.linspace(2, -4, 200)
+        result = []
+        for x_val in x:
+            value = func(coefficients, x_val)
+            result.append(value)
+        return plt.plot(result)
+
+
+
+    def generate_points(self, origin, radius, amount, color):
+        circle = Circle(origin, radius)
+        points = []
+        for i in range(amount):
+            p = random.random() * 2 * math.pi
+            r = circle.radius * math.sqrt(random.random())
+            x = math.cos(p) * r + origin[0]
+            y = math.sin(p) * r + origin[1]
+            plt.scatter(x, y, c=color)
+            points.append(Point(x, y))
+        return points
+
+
+    def plot_canva(self):
+        plt.ion()
+
+        self.__redPoints = self.generate_points((50, 50), 30, 20, 'r')
+        self.__bluePoints = self.generate_points((100, 100), 30, 10, 'b')
+
+        last_plot = None
+        for a in range(15,20):
+            if last_plot is not None:
+                last_plot.pop(0)
+            last_plot = self.print_func(self.func, self.__coefficients)
+            plt.pause(1)
+
+
+    def checkFunction(self, polynomial):
+        for i in range(self.__redPoints.__len__()):
+            a = 10
+            value = self.func(polynomial, self.__redPoints[i].x)
+            if self.__redPoints[i].y < value:
+                self.__plusPoints += 1
+                print(self.__plusPoints)
+            else:
+                self.__plusError +=1
+        for i in range(self.__bluePoints.__len__()):
+            a = 10
+            value2 = self.func(polynomial, self.__bluePoints[i].x)
+            if self.__bluePoints[i].y > value2:
+                self.__minusPoints += 1
+                print(self.__minusPoints)
+            else:
+                self.__minusError += 1
+        errors = self.__plusError + self.__minusError
+        print(errors)
+        return self.__plusError + self.__minusError
+
+
+    def printFunction(self, coe):
+        for i in range (coe.__len__()):
+            print(coe[i])
+
+
+
+    def generateGenes(self, numberOfPopulation):
+        for i in range (numberOfPopulation):
+            self.__coefficients.append(randint(0, 5))
+        coef = self.__coefficients
+        self.__population.append(self.__coefficients)
+        self.printFunction(self.__coefficients)
+        print(self.__population)
+
+
+    def performSelection(self, numberOfPopulation):
+        selectionResult = []
+        for i in range (numberOfPopulation // 2):
+            selectionResult.append(self.tournamentOfTwoChromosome(self.__population[i], self.__population[self.__population.__len__() - 1 - i]))
+        return  selectionResult
+
+    def tournamentOfTwoChromosome(self, chrom1, chrom2):
+        if self.checkFunction(chrom1) < self.checkFunction(chrom2):
+            return chrom1
+        else:
+            return chrom2
+
+
+if __name__ == "__main__":
+    main = Main()
+    for i in range (5):
+        main.generateGenes(5)
+    main.performSelection(5)
+    main.plot_canva()
