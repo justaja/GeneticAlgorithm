@@ -29,12 +29,11 @@ class Main:
         power = coefficients[0]
         for i in range (1, coefficients.__len__()):
             power += pow(x, i) * coefficients[i]
-        self.__population.append(power)
         return power
 
 
     def print_func(self, func, coefficients):
-        x = np.linspace(2, -4, 200)
+        x = np.linspace(0, 3, 200)
         result = []
         for x_val in x:
             value = func(coefficients, x_val)
@@ -59,51 +58,52 @@ class Main:
     def plot_canva(self):
         plt.ion()
 
-        self.__redPoints = self.generate_points((50, 50), 30, 20, 'r')
-        self.__bluePoints = self.generate_points((100, 100), 30, 10, 'b')
+        self.__redPoints = self.generate_points((50, 50), 60, 30, 'r')
+        self.__bluePoints = self.generate_points((100, 100), 30, 30, 'b')
 
         last_plot = None
-        for a in range(15,20):
-            if last_plot is not None:
-                last_plot.pop(0)
-            last_plot = self.print_func(self.func, self.__coefficients)
-            plt.pause(1)
+        if last_plot is not None:
+            last_plot.pop(0)
+        last_plot = self.print_func(self.func, [4,0,4,0])
+        plt.pause(1)
 
 
     def checkFunction(self, polynomial):
-        for i in range(self.__redPoints.__len__()):
-            a = 10
-            value = self.func(polynomial, self.__redPoints[i].x)
-            if self.__redPoints[i].y < value:
+        errors = 0
+        self.__plusError = 0
+        self.__minusError = 0
+        for i in range(len(self.__redPoints)):
+            point = self.__redPoints[i]
+            value = self.func(polynomial, point.x)
+            if point.y < value:
                 self.__plusPoints += 1
-                print(self.__plusPoints)
+                # print(self.__plusPoints)
             else:
                 self.__plusError +=1
-        for i in range(self.__bluePoints.__len__()):
-            a = 10
-            value2 = self.func(polynomial, self.__bluePoints[i].x)
-            if self.__bluePoints[i].y > value2:
+        for i in range(len(self.__bluePoints)):
+            point2 = self.__bluePoints[i]
+            value2 = self.func(polynomial, point2.x)
+            if point2.y > value2:
                 self.__minusPoints += 1
-                print(self.__minusPoints)
             else:
                 self.__minusError += 1
         errors = self.__plusError + self.__minusError
         print(errors)
         return self.__plusError + self.__minusError
 
-
-    def printFunction(self, coe):
-        for i in range (coe.__len__()):
-            print(coe[i])
+    #
+    # def printFunction(self, coe):
+    #     for i in range (coe.__len__()):
+    #         print(coe[i])
 
 
 
     def generateGenes(self, numberOfPopulation):
         for i in range (numberOfPopulation):
             self.__coefficients.append(randint(0, 5))
-        coef = self.__coefficients
         self.__population.append(self.__coefficients)
-        self.printFunction(self.__coefficients)
+        self.__coefficients = []
+        # self.printFunction(self.__coefficients)
         print(self.__population)
 
 
@@ -120,9 +120,16 @@ class Main:
             return chrom2
 
 
+    def getRandomArbitrary(self, min, max):
+        return  randint * (max - min) + min
+
+
+
 if __name__ == "__main__":
     main = Main()
-    for i in range (5):
-        main.generateGenes(5)
-    main.performSelection(5)
+
+    for i in range (2):
+        main.generateGenes(3)
     main.plot_canva()
+    main.performSelection(3)
+
