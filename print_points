@@ -121,7 +121,23 @@ class Main:
 
 
     def getRandomArbitrary(self, min, max):
-        return  randint * (max - min) + min
+        return  randint(0, 20) * (max - min) * min
+
+
+    def performCrossOver(self):
+        crossOverProbability = 90
+        if randint(0,100) < crossOverProbability:
+            randomChromosome = self.__population[round(self.getRandomArbitrary(0, 3))]
+            randomChromosome2 = self.__population[round(self.getRandomArbitrary(0, 2) - 1)]
+            print(randomChromosome)
+            print(randomChromosome2)
+            lenght = len(randomChromosome)
+            i = round(lenght/2)
+            newRandomChromosome = randomChromosome[:i] + randomChromosome2[i:]
+            newRandomChromosome2 = randomChromosome2[:i] + randomChromosome[i:]
+            print(newRandomChromosome)
+            print(newRandomChromosome2)
+
 
 
 
@@ -129,7 +145,8 @@ if __name__ == "__main__":
     main = Main()
 
     for i in range (2):
-        main.generateGenes(3)
+        main.generateGenes(4)
     main.plot_canva()
     main.performSelection(3)
+    main.performCrossOver()
 
