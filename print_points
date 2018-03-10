@@ -24,7 +24,6 @@ class Main:
         self.__plusError = 0
         self.__minusError = 0
 
-
     def func(self, coefficients, x):
         power = coefficients[0]
         for i in range (1, coefficients.__len__()):
@@ -33,13 +32,12 @@ class Main:
 
 
     def print_func(self, func, coefficients):
-        x = np.linspace(0, 3, 200)
+        x = np.linspace(5, 3, 200)
         result = []
         for x_val in x:
             value = func(coefficients, x_val)
             result.append(value)
         return plt.plot(result)
-
 
 
     def generate_points(self, origin, radius, amount, color):
@@ -83,20 +81,36 @@ class Main:
         for i in range(len(self.__bluePoints)):
             point2 = self.__bluePoints[i]
             value2 = self.func(polynomial, point2.x)
-            if point2.y > value2:
+            if point2.y < value2:
                 self.__minusPoints += 1
             else:
                 self.__minusError += 1
         errors = self.__plusError + self.__minusError
-        print(errors)
+        print(self.__plusError)
+        print(self.__minusError)
         return self.__plusError + self.__minusError
 
-    #
-    # def printFunction(self, coe):
-    #     for i in range (coe.__len__()):
-    #         print(coe[i])
 
 
+    def calculateGeneration(self, numberOfGenerations):
+        for i in range(numberOfGenerations):
+            nextGenerationPopulation = main.performSelection(3)
+            i = len(nextGenerationPopulation)
+            for i in range(len(main.__population)):
+                newChromosome = main.__population[randint(0, 1)]
+                newChromosome = main.performCrossOver()
+                nextGenerationPopulation.append(newChromosome)
+                last_plot = None
+                if last_plot is not None:
+                    last_plot.pop(0)
+                last_plot = self.print_func(self.func, newChromosome)
+            main.__population = nextGenerationPopulation
+
+
+    def performMutation(self, chrom):
+        lenght = len(chrom)
+        randomNumber = randint(0, lenght)
+        chrom[randomNumber] += 1
 
     def generateGenes(self, numberOfPopulation):
         for i in range (numberOfPopulation):
@@ -125,8 +139,8 @@ class Main:
 
 
     def performCrossOver(self):
-        crossOverProbability = 90
-        if randint(0,100) < crossOverProbability:
+        crossOverProbability = 0.9
+        if randint(0,1) < crossOverProbability:
             randomChromosome = self.__population[round(self.getRandomArbitrary(0, 3))]
             randomChromosome2 = self.__population[round(self.getRandomArbitrary(0, 2) - 1)]
             print(randomChromosome)
@@ -139,14 +153,12 @@ class Main:
             print(newRandomChromosome2)
 
 
-
-
 if __name__ == "__main__":
     main = Main()
 
     for i in range (2):
         main.generateGenes(4)
     main.plot_canva()
-    main.performSelection(3)
+    main.performSelection(2)
     main.performCrossOver()
 
