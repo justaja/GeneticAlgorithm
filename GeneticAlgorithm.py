@@ -3,9 +3,9 @@ import matplotlib.pyplot as plt
 import random as random
 from random import randint
 import math as math
-import self as self
 
 from matplotlib.patches import Circle
+
 
 class Point:
     def __init__(self, x, y):
@@ -30,7 +30,6 @@ class Main:
             power += pow(x, i) * coefficients[i]
         return power
 
-
     def print_func(self, func, coefficients):
         x = np.linspace(5, 3, 200)
         result = []
@@ -38,7 +37,6 @@ class Main:
             value = func(coefficients, x_val)
             result.append(value)
         return plt.plot(result)
-
 
     def generate_points(self, origin, radius, amount, color):
         circle = Circle(origin, radius)
@@ -52,7 +50,6 @@ class Main:
             points.append(Point(x, y))
         return points
 
-
     def plot_canva(self):
         plt.ion()
 
@@ -64,7 +61,6 @@ class Main:
             last_plot.pop(0)
         last_plot = self.print_func(self.func, [4,0,4,0])
         plt.pause(1)
-
 
     def checkFunction(self, polynomial):
         errors = 0
@@ -90,8 +86,6 @@ class Main:
         print("%s minus error", self.__minusError)
         return self.__plusError + self.__minusError
 
-
-
     def calculateGeneration(self, numberOfGenerations):
         for i in range(numberOfGenerations):
             nextGenerationPopulation = main.performSelection(3)
@@ -104,7 +98,6 @@ class Main:
                 newChromosome = main.performMutation(newChromosome)
                 nextGenerationPopulation.append(newChromosome)
             main.__population = nextGenerationPopulation
-
 
     def performMutation(self, chrom):
         print(' %s chroooooon', chrom)
@@ -122,12 +115,11 @@ class Main:
         # self.printFunction(self.__coefficients)
         print(self.__population)
 
-
     def performSelection(self, numberOfPopulation):
         selectionResult = []
         for i in range (numberOfPopulation // 2):
             selectionResult.append(self.tournamentOfTwoChromosome(self.__population[i], self.__population[self.__population.__len__() - 1 - i]))
-        return  selectionResult
+        return selectionResult
 
     def tournamentOfTwoChromosome(self, chrom1, chrom2):
         if self.checkFunction(chrom1) < self.checkFunction(chrom2):
@@ -135,10 +127,8 @@ class Main:
         else:
             return chrom2
 
-
     def getRandomArbitrary(self, min, max):
-        return  randint(0, 20) * (max - min) * min
-
+        return randint(0, 20) * (max - min) * min
 
     def performCrossOver(self, chrom):
         crossOverProbability = 0.9
@@ -150,7 +140,7 @@ class Main:
         newRandomChromosome = randomChromosome[:i] + randomChromosome2[i:]
         newRandomChromosome2 = randomChromosome2[:i] + randomChromosome[i:]
         print("%s random in cross", newRandomChromosome)
-        return(newRandomChromosome)
+        return newRandomChromosome
 
 
 if __name__ == "__main__":
