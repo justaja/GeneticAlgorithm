@@ -58,20 +58,16 @@ class Main:
 
         self.__redPoints = self.generate_points((50, 50), 60, 30, 'r')
         self.__bluePoints = self.generate_points((100, 100), 30, 30, 'b')
-
-        last_plot = None
-        if last_plot is not None:
-            last_plot.pop(0)
-        last_plot = self.print_func(self.func, [4,0,4,0])
+        #
+        # last_plot = None
+        # if last_plot is not None:
+        #     last_plot.pop(0)
+        # last_plot = self.print_func(self.func, [4,0,4,0])
         plt.pause(1)
 
 
     def checkFunction(self, polynomial):
         errors = 0
-        last_plot = None
-        if last_plot is not None:
-            last_plot.pop(0)
-        last_plot = self.print_func(self.func, polynomial)
         self.__plusError = 0
         self.__minusError = 0
         for i in range(len(self.__redPoints)):
