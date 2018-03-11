@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import random as random
 from random import randint
 import math as math
+import copy
 import self as self
 
 from matplotlib.patches import Circle
@@ -25,9 +26,7 @@ class Main:
         self.__minusError = 0
 
     def func(self, coefficients, x):
-        power = coefficients[0]
-        for i in range (1, coefficients.__len__()):
-            power += pow(x, i) * coefficients[i]
+        power = np.polyval(coefficients, x)
         return power
 
 
@@ -38,7 +37,6 @@ class Main:
             value = func(coefficients, x_val)
             result.append(value)
         return plt.plot(result)
-
 
     def generate_points(self, origin, radius, amount, color):
         circle = Circle(origin, radius)
@@ -52,18 +50,11 @@ class Main:
             points.append(Point(x, y))
         return points
 
-
-    def plot_canva(self):
-        plt.ion()
-
-        self.__redPoints = self.generate_points((50, 50), 60, 30, 'r')
-        self.__bluePoints = self.generate_points((100, 100), 30, 30, 'b')
-        #
-        # last_plot = None
-        # if last_plot is not None:
-        #     last_plot.pop(0)
-        # last_plot = self.print_func(self.func, [4,0,4,0])
-        plt.pause(1)
+    def generateGenes(self, degree):
+        self.__coefficients = np.random.random((degree + 1)) * 6 - 3
+        self.__coefficients = np.ndarray.tolist(self.__coefficients)
+        self.__population.append(self.__coefficients)
+        self.__coefficients = []
 
 
     def checkFunction(self, polynomial):
@@ -75,7 +66,6 @@ class Main:
             value = self.func(polynomial, point.x)
             if point.y < value:
                 self.__plusPoints += 1
-                # print(self.__plusPoints)
             else:
                 self.__plusError +=1
         for i in range(len(self.__bluePoints)):
@@ -86,48 +76,40 @@ class Main:
             else:
                 self.__minusError += 1
         errors = self.__plusError + self.__minusError
-        print("%s plus error", self.__plusError)
-        print("%s minus error", self.__minusError)
         return self.__plusError + self.__minusError
 
 
 
     def calculateGeneration(self, numberOfGenerations):
         for i in range(numberOfGenerations):
-            nextGenerationPopulation = main.performSelection(3)
-            i = len(nextGenerationPopulation)
-            for i in range(len(main.__population)):
-                newChromosome = main.__population[randint(0, 1)]
-                print("%s after population", newChromosome)
-                newChromosome = self.performCrossOver(newChromosome)
-                print("%s after cross", newChromosome)
-                newChromosome = main.performMutation(newChromosome)
-                nextGenerationPopulation.append(newChromosome)
-            main.__population = nextGenerationPopulation
-
-
-    def performMutation(self, chrom):
-        print(' %s chroooooon', chrom)
-        lenght = 3
-        randomNumber = randint(0, lenght)
-        print("% randooom numebeer", randomNumber)
-        chrom[randomNumber] = 2
-        print(chrom)
-
-    def generateGenes(self, numberOfPopulation):
-        for i in range (numberOfPopulation):
-            self.__coefficients.append(randint(0, 5))
-        self.__population.append(self.__coefficients)
-        self.__coefficients = []
-        # self.printFunction(self.__coefficients)
-        print(self.__population)
+            newPopulation = []
+            while len(main.__population) > len(newPopulation):
+                chosenOnes = main.performSelection(3)
+                print("%s, SELECTION", chosenOnes)
+                randomInt = randint(0, 2)
+                if randomInt == 0:
+                    newChromosome = self.performCrossOver(chosenOnes)
+                    print("%s AFTER CROSSOVER", newChromosome)
+                    newPopulation.append(newChromosome)
+                if randomInt == 1:
+                    newChromosome = main.performMutation(chosenOnes)
+                    print("%s AFTER MUTATION", newChromosome)
+                    newPopulation.append(newChromosome)
+            print("%s NEW POPULATION", newPopulation)
+            print("%s MAIN POPULATION", self.__population)
+            main.__population = copy.deepcopy(newPopulation)
 
 
     def performSelection(self, numberOfPopulation):
         selectionResult = []
-        for i in range (numberOfPopulation // 2):
+        for i in range (2):
             selectionResult.append(self.tournamentOfTwoChromosome(self.__population[i], self.__population[self.__population.__len__() - 1 - i]))
-        return  selectionResult
+            if i == 1:
+                if selectionResult[0] == selectionResult[1]:
+                    selectionResult = []
+                    i = 0
+                    continue
+        return selectionResult
 
     def tournamentOfTwoChromosome(self, chrom1, chrom2):
         if self.checkFunction(chrom1) < self.checkFunction(chrom2):
@@ -136,29 +118,50 @@ class Main:
             return chrom2
 
 
-    def getRandomArbitrary(self, min, max):
-        return  randint(0, 20) * (max - min) * min
+    def performMutation(self, chromosomes):
+        newChromosome = copy.deepcopy(chromosomes[0])
+        print(newChromosome)
+        newChromosome[0] = 2
+        print(newChromosome)
+        return newChromosome
 
 
-    def performCrossOver(self, chrom):
+    def performCrossOver(self, chromosomes):
         crossOverProbability = 0.9
         # if randint(0,1) < crossOverProbability:
-        randomChromosome = chrom
-        randomChromosome2 = self.__population[round(self.getRandomArbitrary(0, 2) - 1)]
+        randomChromosome = chromosomes[0]
+        randomChromosome2 = chromosomes[1]
         lenght = len(randomChromosome)
         i = round(lenght/2)
         newRandomChromosome = randomChromosome[:i] + randomChromosome2[i:]
         newRandomChromosome2 = randomChromosome2[:i] + randomChromosome[i:]
-        print("%s random in cross", newRandomChromosome)
         return(newRandomChromosome)
+
+
+    def plot_canva(self):
+        plt.ion()
+
+        self.__redPoints = self.generate_points((50, 50), 60, 30, 'r')
+        self.__bluePoints = self.generate_points((100, 100), 30, 30, 'b')
+
+        last_plot = None
+        if last_plot is not None:
+            last_plot.pop(0)
+        last_plot = self.print_func(self.func, [4,0,4,0])
+        plt.show()
+
+        # plt.plot(positive[0], positive[1], 'g+', negative[0], negative[1], 'r_',
+        #          np.arange(-1, 1, 0.01), np.polyval(best_genotype[0], np.arange(-1, 1, 0.01)))
+        # plt.show()
+
 
 
 if __name__ == "__main__":
     main = Main()
 
-    for i in range (10):
-        main.generateGenes(4)
+    for i in range (5):
+        main.generateGenes(2)
     main.plot_canva()
-    main.calculateGeneration(3)
+    main.calculateGeneration(2)
 
 
