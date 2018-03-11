@@ -24,6 +24,31 @@ class Main:
         self.__coefficients = []
         self.__plusError = 0
         self.__minusError = 0
+        self.__i = 0
+
+
+    def calculateGeneration(self, numberOfGenerations):
+        print("MAAAAAAINNNNNN", self.__population)
+        for i in range(numberOfGenerations):
+            newPopulation = []
+            while len(main.__population) > len(newPopulation):
+                chosenOnes = main.performSelection(3)
+                print("%s, SELECTION", chosenOnes)
+                randomInt = randint(0, 2)
+                if randomInt == 0:
+                    newChromosome = self.performCrossOver(chosenOnes)
+                    print("%s AFTER CROSSOVER", newChromosome)
+                    newPopulation.append(newChromosome)
+                if randomInt == 1:
+                    newChromosome = main.performMutation(chosenOnes)
+                    print("%s AFTER MUTATION", newChromosome)
+                    newPopulation.append(newChromosome)
+                print("NEW POPULATION AAAAAAAAAAAAAAAAAAA", newPopulation)
+            print("%s NEW POPULATION", newPopulation)
+            print("%s MAIN POPULATION", self.__population)
+            self.__i = 0
+            main.__population = copy.deepcopy(newPopulation)
+
 
     def func(self, coefficients, x):
         power = np.polyval(coefficients, x)
@@ -79,36 +104,19 @@ class Main:
         return self.__plusError + self.__minusError
 
 
-
-    def calculateGeneration(self, numberOfGenerations):
-        for i in range(numberOfGenerations):
-            newPopulation = []
-            while len(main.__population) > len(newPopulation):
-                chosenOnes = main.performSelection(3)
-                print("%s, SELECTION", chosenOnes)
-                randomInt = randint(0, 2)
-                if randomInt == 0:
-                    newChromosome = self.performCrossOver(chosenOnes)
-                    print("%s AFTER CROSSOVER", newChromosome)
-                    newPopulation.append(newChromosome)
-                if randomInt == 1:
-                    newChromosome = main.performMutation(chosenOnes)
-                    print("%s AFTER MUTATION", newChromosome)
-                    newPopulation.append(newChromosome)
-            print("%s NEW POPULATION", newPopulation)
-            print("%s MAIN POPULATION", self.__population)
-            main.__population = copy.deepcopy(newPopulation)
-
-
     def performSelection(self, numberOfPopulation):
         selectionResult = []
-        for i in range (2):
-            selectionResult.append(self.tournamentOfTwoChromosome(self.__population[i], self.__population[self.__population.__len__() - 1 - i]))
+        self.__i = 0
+        for i in range ((len(self.__population)) // 2):
+            print("PETLA")
+            selectionResult.append(self.tournamentOfTwoChromosome(self.__population[self.__i], self.__population[len(self.__population) - self.__i  - 1]))
+            self.__i += 1
             if i == 1:
                 if selectionResult[0] == selectionResult[1]:
                     selectionResult = []
                     i = 0
                     continue
+
         return selectionResult
 
     def tournamentOfTwoChromosome(self, chrom1, chrom2):
@@ -120,9 +128,7 @@ class Main:
 
     def performMutation(self, chromosomes):
         newChromosome = copy.deepcopy(chromosomes[0])
-        print(newChromosome)
         newChromosome[0] = 2
-        print(newChromosome)
         return newChromosome
 
 
@@ -160,7 +166,7 @@ if __name__ == "__main__":
     main = Main()
 
     for i in range (5):
-        main.generateGenes(2)
+        main.generateGenes(3)
     main.plot_canva()
     main.calculateGeneration(2)
 
